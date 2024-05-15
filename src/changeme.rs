@@ -1,38 +1,35 @@
-pub trait CallbackData {}
-
 #[derive(Debug)]
-pub struct MyCallbackData<'a> {
-    data: &'a [u8],
+pub struct MyCallbackData;
+
+pub struct MyCallback {
+    pub callback: Box<dyn Fn(&MyCallbackData)>,
 }
 
-impl<'a> CallbackData for MyCallbackData<'a> {}
-
-pub struct MyCallback<T: CallbackData> {
-    callback: Box<dyn Fn(&T)>,
-}
-
-pub trait MyTrait<T: CallbackData> {
-    fn set_callback(&mut self, cb: MyCallback<T>);
+pub trait MyTrait {
+    fn set_callback(&mut self, cb: MyCallback);
     fn do_something(&self);
 }
 
-pub struct MyStruct<T: CallbackData> {
-    callbacks: Vec<MyCallback<T>>,
-    data: [u8; 3],
+pub struct MyStruct {
+    callbacks: Vec<MyCallback>,
 }
 
-impl<'a> MyTrait<MyCallbackData<'a>> for MyStruct<MyCallbackData<'a>> {
-    fn set_callback(&mut self, cb: MyCallback<MyCallbackData<'a>>) {
+impl MyStruct {
+    pub fn new() -> Self {
+        MyStruct {
+            callbacks: Vec::new(),
+        }
+    }
+}
+
+impl MyTrait for MyStruct {
+    fn set_callback(&mut self, cb: MyCallback) {
         self.callbacks.push(cb);
     }
 
     fn do_something(&self) {
-
         for cb in &self.callbacks {
-            let cb_data = MyCallbackData {
-                data: &self.data,
-            };
-
+            let cb_data = MyCallbackData;
             (cb.callback)(&cb_data);
         }
     }

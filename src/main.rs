@@ -1,11 +1,8 @@
 mod changeme;
-use changeme::{MyTrait,MyStruct,MyCallback,MyCallbackData};
+use changeme::{MyTrait, MyStruct, MyCallback, MyCallbackData};
 
 fn main() {
-    let mut s = MyStruct {
-        callbacks: Vec::new(),
-        data: [1, 2, 3],
-    };
+    let mut s = MyStruct::new();
 
     s.set_callback(MyCallback {
         callback: Box::new(|data: &MyCallbackData| {
